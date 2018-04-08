@@ -1,2 +1,2 @@
 # DecimalToBinary
-Decimal to Binary written in Pascal (not finised).
+Decimal to Binary written in Pascal (not finished).
