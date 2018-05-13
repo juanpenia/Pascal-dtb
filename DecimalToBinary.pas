@@ -67,7 +67,6 @@ end;
 procedure FindExcess(num: integer; var excess: integer);
 var
 	MSB: integer; // Most Significant Bit
-	aux: Extended;
 	
 begin
 	// ---
@@ -76,9 +75,7 @@ begin
 		num:= num div 2;
 		MSB:= MSB + 1;
 	end;
-	
-	aux:= power(2, (MSB));
-	excess:= Round(aux); // without this, the program wouldn't be able to add the excess to the number since it's an extended type of var.
+	excess:= Round(power(2, (MSB)));
 
 end;
 
