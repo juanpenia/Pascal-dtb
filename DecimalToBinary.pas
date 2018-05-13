@@ -13,11 +13,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Program DecimalToBinary;
 
-Uses sysutils;
+Uses sysutils, Math;
 
 var
-	operation: integer;
-	binary: integer;
+	operation, binary, excess: integer;
 	number: longint;
 	str: string;
 	
@@ -27,7 +26,8 @@ begin
 	WriteLn('0 for Binary.');
 	WriteLn('1 for Signed Binary. ');
 	WriteLn('2 for One''s Complement.');
-	WriteLn('3 for Two''s Complement (coming soon).');
+	WriteLn('3 for Two''s Complement.');
+	WriteLn('4 for Excess 2^n-1 (coming soon).');
 	readln(operation);
 
 end;
@@ -45,11 +45,16 @@ begin
 		
 	if(operation = 3) then
 		writeln('Two''s Complement');		
-		
-	if(operation >= 4) or (operation < 0) then
-		writeln('Invalid operation. Please, insert a valid operation.');
 	
-	writeln();
+	if(operation = 4) then
+		writeln('Excess 2^n-1');
+		
+	if(operation >= 5) or (operation < 0) then begin
+		writeln('Invalid operation. Please, insert a valid operation.');
+		writeln;
+		SelectConvertionType;
+	end;
+	writeln;
 end;
 
 procedure ResetVars; // for later usage
@@ -59,22 +64,48 @@ begin
 	binary:= 0;
 end;
 
+procedure FindExcess(num: integer; var excess: integer);
+var
+	MSB: integer; // Most Significant Bit
+	aux: Extended;
+	
+begin
+	// ---
+	MSB:= 0;
+	while (num > 0) do begin
+		num:= num div 2;
+		MSB:= MSB + 1;
+	end;
+	
+	aux:= power(2, (MSB));
+	excess:= Round(aux); // without this, the program wouldn't be able to add the excess to the number since it's an extended type of var.
+
+end;
+
+procedure AskNumber;
+begin
+	writeln('Please, write a number and then press Enter.');
+	writeln('');	
+	write('Your number is: ');
+end;
+
 procedure ConvertToBinary;
 begin
+
+// ================================ [Binary] ================================
+
 	if(operation = 0) then begin
-		writeln('Please, write a number and then press Enter.');
-		writeln('');
-		
-		write('Your number is: ');
+
 		readln(number);
 		
 		if(number < 0) then begin
 			writeln('You have inserted an invalid number. Please, input a number greater or equal to 0.');
-		end
-		
-		else begin
-		
-			//writeln('You chose the number: ', number);
+			writeln();
+			AskNumber;
+			readln(number);
+			
+		end;
+
 			
 			while(number > 0) do begin
 				binary := number mod 2;
@@ -84,28 +115,19 @@ begin
 			end;
 			
 			writeln('Which in binary equals to: ', str);
-		end;
+
 	end;
 	
 	
-	if(operation = 1) then begin
+// ============================ [Signed Binary] ============================
 	
-            
-		//writeln('Currently unavailable.');
-		writeln('Please, write a number and then press Enter.');
-		writeln('');
-		
-		write('Your number is: ');
-		
+	if(operation = 1) then begin
+
 		readln(number);
-		
-		
-		//writeln('You chose the number:' ,number);
 		
 		if(number < 0) then begin
 			
 			number:= abs(number);
-			
 			while(number > 0) do begin
 				binary := number mod 2;
 				number := number div 2;
@@ -128,29 +150,56 @@ begin
 		end;
 		//
 		writeln('Which in binary equals to: ', str);
-		
-	
 	end;
 	
 
 	
-	//if(operation = 1) or (operation = 2) then
+// =========================== [One's complement] ===========================
+
 	if(operation = 2) then begin
 	
-		//writeln('Currently unavailable.');
-		writeln('Please, write a number and then press Enter.');
-		writeln('');
-		
-		write('Your number is: ');
-		
 		readln(number);
-		
 		
 		if(number < 0) then begin
 			
-			number:= abs(number);
-			
+			while(number < 0) do begin
+				binary := number mod 2;
+				number := number div 2;
+				
+				if(binary = 0)
+				then binary:= 1
+				else binary:= 0;
+				
+				str:= IntToStr(binary) + str;
+			end;
+		str:= '1' + str;
+		
+		end
+		
+		else begin
+		
 			while(number > 0) do begin
+				binary := number mod 2;
+				number := number div 2;
+				str:= IntToStr(binary) + str;
+			end;
+		
+		str:= '0' + str;
+		end;
+		
+		writeln('Which in binary equals to: ', str);
+	end;
+	
+// =========================== [Two's complement] ===========================
+
+	if(operation = 3) then begin
+	
+		readln(number);
+		
+		if(number < 0) then begin
+		
+			number := number + 1;
+			while(number < 0) do begin
 				binary := number mod 2;
 				number := number div 2;
 				
@@ -177,24 +226,53 @@ begin
 		end;
 		//
 		writeln('Which in binary equals to: ', str);
-		
-		
-            
 	end;
 	
-    if(operation = 3) then
-		writeln('Two''s complement is coming soon!');
+// ============================= [Excess 2⁽ⁿ⁻¹⁾] =============================	
 	
+	if(operation = 4) then begin
+	
+		readln(number);
+		
+		if(number < 0) then begin
+			
+			number:= abs(number);
+			FindExcess(number, excess);
+			number:= number + excess;
+			
+			while(number > 0) do begin
+				binary := number mod 2;
+				number := number div 2;
+				str:= IntToStr(binary) + str;
+			end;
+		
+		end
+		
+		else begin
+		
+			FindExcess(number, excess);
+			number:= number + excess;
 
+			while(number > 0) do begin
+				binary := number mod 2;
+				number := number div 2;
+				str:= IntToStr(binary) + str;
+
+			end;
+		
+		end;
+		//
+		writeln('Which in binary equals to: ', str);
+	end;
 end;
 
 Begin
 
 	SelectConvertionType;
 	CheckType;
+	AskNumber;
 	ConvertToBinary;
 	ResetVars;
-	
 	
 	readln(); // sin esta linea el programa de mierda se cierra y no vemos el result wey
 	// without that line, the program exits and we don't see the result 'wey'
