@@ -27,7 +27,7 @@ begin
 	WriteLn('1 for Signed Binary. ');
 	WriteLn('2 for One''s Complement.');
 	WriteLn('3 for Two''s Complement.');
-	WriteLn('4 for Excess 2^n-1 (coming soon).');
+	WriteLn('4 for Excess 2^n-1.');
 	readln(operation);
 
 end;
