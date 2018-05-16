@@ -1,14 +1,9 @@
 {
 MIT License
-
 Copyright © 2018 Juan Peña
-
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 }
 
 Program DecimalToBinary;
@@ -16,7 +11,7 @@ Program DecimalToBinary;
 Uses sysutils, Math;
 
 var
-	operation, binary, excess: integer;
+	operation, binary: integer;
 	number: longint;
 	str: string;
 	
@@ -53,29 +48,32 @@ begin
 		writeln('Invalid operation. Please, insert a valid operation.');
 		writeln;
 		SelectConvertionType;
+        CheckType;
 	end;
 	writeln;
 end;
 
+{
 procedure ResetVars; // for later usage
 begin
 	number:= 0;
 	str:= '';
 	binary:= 0;
 end;
+}
 
-procedure FindExcess(num: integer; var excess: integer);
+function Excess(number: integer): integer;
 var
 	MSB: integer; // Most Significant Bit
 	
 begin
 	// ---
 	MSB:= 0;
-	while (num > 0) do begin
-		num:= num div 2;
+	while (number > 0) do begin
+		number:= number div 2;
 		MSB:= MSB + 1;
 	end;
-	excess:= Round(power(2, (MSB)));
+	Excess:= Round(power(2, (MSB)));
 
 end;
 
@@ -234,8 +232,7 @@ begin
 		if(number < 0) then begin
 			
 			number:= abs(number);
-			FindExcess(number, excess);
-			number:= number + excess;
+			number:= number + Excess(number);
 			
 			while(number > 0) do begin
 				binary := number mod 2;
@@ -247,9 +244,7 @@ begin
 		
 		else begin
 		
-			FindExcess(number, excess);
-			number:= number + excess;
-
+			number:= number + Excess(number);
 			while(number > 0) do begin
 				binary := number mod 2;
 				number := number div 2;
@@ -269,9 +264,8 @@ Begin
 	CheckType;
 	AskNumber;
 	ConvertToBinary;
-	ResetVars;
+	//ResetVars;
 	
 	readln(); // sin esta linea el programa de mierda se cierra y no vemos el result wey
 	// without that line, the program exits and we don't see the result 'wey'
 End.
-	
